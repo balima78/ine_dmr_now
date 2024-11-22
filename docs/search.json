@@ -1,0 +1,82 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Report de nowcasting DMR-SS",
+    "section": "",
+    "text": "Análise de séries temporais a nível de CAE",
+    "crumbs": [
+      "Análise de séries temporais a nível de CAE"
+    ]
+  },
+  {
+    "objectID": "100-intro.html",
+    "href": "100-intro.html",
+    "title": "1  Introdução",
+    "section": "",
+    "text": "A base de dados “DMR-SS”, consiste numa Declaração Mensal de Remunerações entregue pela entidade empregadora ou seu representante legal à Segurança Social, onde constam todas as quantias pagas ao trabalhador, que são objeto de descontos e respetivas taxas contributivas aplicadas.\nAtualmente a DMR-SS é enviada mensalmente, em quatro versões revistas para o INE. O DMSI faz um tratamento de dados, através de um processo de imputação parcial em R. Posteriormente, os diversos departamentos de matéria do INE, usam estes dados para produzir informação estatística.\nContudo, os dados das DMR-SS podem conter muita informação em falta no período de Verão (férias fiscais). Neste contexto o NDA desenvolveu um modelo alternativo, que faz uma previsão mensal (nowcast) do que seriam os dados a receber, agregados ao nível CAE (5 dígitos).\nEstes valores estimados excluem as CAEs cujos dados são recolhidos via inquérito às UAE, pelo que estes, posteriormente, podem ser integrados numa tabela final a ser utilizada na produção estatística (via “Control-M”).",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Introdução</span>"
+    ]
+  },
+  {
+    "objectID": "200-metodos.html",
+    "href": "200-metodos.html",
+    "title": "2  Métodos",
+    "section": "",
+    "text": "2.1 Nowcast\nPara cada uma das series pretende-se fazer o nowcast para o mês de tratamento. Para tal, foram treinados os modelos ARIMA, ETS, SNAIVE, TSLM e mixed com recurso ao package {fable} (O’Hara-Wild, Hyndman, and Wang 2022):\nA selecção do melhor modelo para cada uma das séries temporais foi feita com o cross-validation de 12 meses com a previsão sequencial de cada um dos meses. A métrica Mean Absolute Scaled Error (MASE) (Hamner and Frasco 2018) foi usada para comparar as previsões dos modelos com os valores reais sendo escolhido para nowcast o modelo com um menor valor de MASE.\nNo caso de alguma das séries de cada CAE ter até 4 meses em falta é feita a imputação desses missings com recurso ao Kalman-Smoothing em modelos estruturais de series temporais (Moritz and Bartz-Beielstein 2017).",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Métodos</span>"
+    ]
+  },
+  {
+    "objectID": "200-metodos.html#nowcast",
+    "href": "200-metodos.html#nowcast",
+    "title": "2  Métodos",
+    "section": "",
+    "text": "ARIMA: devolve o melhor modelo ARIMA para uma serie temporal univariada;\nETS: Exponential smoothing state space models sem especificação dos parametros error, trend e season;\nSNAIVE: método naive sazonal com um lag anual;\nTSLM: modelo de regressão linear com tendência e sazonalidade;\nmixed: média dos resultados dos modelos ARIMA, ETS, SNAIVE e TSLM;\nvarHom: é aplicada a variação homóloga ao mês anterior.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Métodos</span>"
+    ]
+  },
+  {
+    "objectID": "200-metodos.html#r",
+    "href": "200-metodos.html#r",
+    "title": "2  Métodos",
+    "section": "2.2 R",
+    "text": "2.2 R\nToda a análise, visualização e tratamento dos dados são feitos em R:\n\n\n\n\n\n\n\npackage\ndescrição\n\n\n\n\ntidyverse\npara a manipulação de dados (Wickham et al. 2019)\n\n\nlubridate\npara trabalhar com datas (Grolemund and Wickham 2011)\n\n\ntsibble\npara manipulação de dados de serie temporais (Wang, Cook, and Hyndman 2020)\n\n\ntargets\npara a construção de uma pipeline com as operações feitas aos dados (Landau 2021b)\n\n\ntarchetypes\numa colecção de funcionalidades a usar na pipeline (Landau 2021a)\n\n\nfable\ncoleção de modelos comuns para forecasting de series univariadas (O’Hara-Wild, Hyndman, and Wang 2022) –&gt;\n\n\nimputeTS\npara a imputação de valores no caso de missings (Moritz and Bartz-Beielstein 2017)\n\n\nisotree\npara a identificação de anomalias (Cortes 2023)\n\n\ntrelliscopejs\npara a visualização de múltiplos gráficos (Hafen 2021)\n\n\nefat\nauxiliar para tratamento de dados do e-fatura (Lima 2022)\n\n\nfera\nferramentas de apoio à análise de dados administrativos (Lima and Cunha 2024)\n\n\n\n\n\n\n\n\n\nCortes, David. 2023. “Isotree: Isolation-Based Outlier Detection.” R package.\n\n\nGrolemund, Garrett, and Hadley Wickham. 2011. “Dates and Times Made Easy with lubridate.” Journal of Statistical Software 40 (3): 1–25. https://www.jstatsoft.org/v40/i03/.\n\n\nHafen, Ryan. 2021. “Trelliscopejs: Trelliscope Display Specification for the Trelliscope JavaScript Library.” R package.\n\n\nHamner, Ben, and Michael Frasco. 2018. Metrics: Evaluation Metrics for Machine Learning. https://CRAN.R-project.org/package=Metrics.\n\n\nLandau, William Michael. 2021a. Tarchetypes: Archetypes for Targets. R package.\n\n\n———. 2021b. “The Targets r Package: A Dynamic Make-Like Function-Oriented Pipeline Toolkit for Reproducibility and High-Performance Computing.” Journal of Open Source Software 6 (57): 2959. https://doi.org/10.21105/joss.02959.\n\n\nLima, Bruno. 2022. “Efat: Funções Para Análise de Dados Do e-Fatura.” R package. https://git.ine.pt/nda/e-fatura/efat.\n\n\nLima, Bruno, and Alexandre Cunha. 2024. “Fera: FERramentas de Apoio à Análise de Dados Administrativos.” R package. https://git.ine.pt/nda/packages-r-nda/fera.\n\n\nMoritz, Steffen, and Thomas Bartz-Beielstein. 2017. “imputeTS: Time Series Missing Value Imputation in R.” The R Journal 9 (1): 207–18. https://doi.org/10.32614/RJ-2017-009.\n\n\nO’Hara-Wild, Mitchell, Rob Hyndman, and Earo Wang. 2022. Fable: Forecasting Models for Tidy Time Series. https://CRAN.R-project.org/package=fable.\n\n\nWang, Earo, Dianne Cook, and Rob J Hyndman. 2020. “A New Tidy Data Structure to Support Exploration and Modeling of Temporal Data.” Journal of Computational and Graphical Statistics 29 (3): 466–78. https://doi.org/10.1080/10618600.2019.1695624.\n\n\nWickham, Hadley, Mara Averick, Jennifer Bryan, Winston Chang, Lucy D’Agostino McGowan, Romain François, Garrett Grolemund, et al. 2019. “Welcome to the tidyverse.” Journal of Open Source Software 4 (43): 1686.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Métodos</span>"
+    ]
+  },
+  {
+    "objectID": "300-resultados.html",
+    "href": "300-resultados.html",
+    "title": "3  Resultados",
+    "section": "",
+    "text": "3.1 Mês de tratamento\nA partir de 670 CAEs diferentes (CAEs a 5 dígitos utilizadas no âmbito do IVNE), foram construídas as respetivas series temporais, desde a data de primeiro registo até ao mês 2024-10.\nForam excluídas da análise as CAEs sem resultados no mês anterior ao mês de tratamento e as que tivessem mais de 4 meses (consecutivos ou não) em falta nas respetivas series temporais.\nCAEs sem nowcast\n\n\nCAE\nNr.linhas\nNr.missings\nPrimeiro.Mes\nUltimo.Mes\n\n\n\n\n06200\n15\n0\n2019-10\n2020-12\n\n\n08920\n43\n20\n2015-09\n2020-11\n\n\n09100\n116\n0\n2015-01\n2024-08\n\n\n10411\n76\n41\n2015-01\n2024-09\n\n\n17240\n6\n0\n2017-10\n2018-03\n\n\n24310\n85\n1\n2015-01\n2022-02\n\n\n25402\n14\n103\n2015-01\n2024-09\n\n\n26702\n58\n59\n2015-01\n2024-09\n\n\n26800\n97\n20\n2015-01\n2024-09\n\n\n28230\n62\n14\n2015-01\n2021-04\n\n\n30400\n6\n0\n2015-01\n2015-06\n\n\n82921\n50\n25\n2015-01\n2021-03\nResultados de nowcast:\nNowcast para os valores de REM total\nNowcast para os valores de NPS\nOs resultados de nowcast para o mês de tratamento, foram adicionados à tabela T_DMRSS_FORECASTING em FNTLAB.",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Resultados</span>"
+    ]
+  },
+  {
+    "objectID": "300-resultados.html#mês-de-tratamento",
+    "href": "300-resultados.html#mês-de-tratamento",
+    "title": "3  Resultados",
+    "section": "",
+    "text": "Legenda das variáveis auxiliares\n\n\n\n\n\n\nvariável\ndescrição\n\n\n\n\nid\nCAE\n\n\nn_row\nNr total de meses em análise (do primeiro registo ao mês atual)\n\n\nn_na\nNr de meses em falta\n\n\nmax_data\núltimo mês com valores\n\n\nbest_model_rem\nModelo selecionado para o nowcast de REM\n\n\nbest_model_nps\nModelo selecionado para o nowcast de NPS",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Resultados</span>"
+    ]
+  },
+  {
+    "objectID": "references.html",
+    "href": "references.html",
+    "title": "5  References",
+    "section": "",
+    "text": "Cortes, David. 2023. “Isotree: Isolation-Based Outlier\nDetection.” R package.\n\n\nGrolemund, Garrett, and Hadley Wickham. 2011. “Dates and Times\nMade Easy with lubridate.”\nJournal of Statistical Software 40 (3): 1–25. https://www.jstatsoft.org/v40/i03/.\n\n\nHafen, Ryan. 2021. “Trelliscopejs: Trelliscope Display\nSpecification for the Trelliscope JavaScript Library.” R package.\n\n\nHamner, Ben, and Michael Frasco. 2018. Metrics: Evaluation Metrics\nfor Machine Learning. https://CRAN.R-project.org/package=Metrics.\n\n\nLandau, William Michael. 2021a. Tarchetypes: Archetypes for\nTargets. R package.\n\n\n———. 2021b. “The Targets r Package: A Dynamic Make-Like\nFunction-Oriented Pipeline Toolkit for Reproducibility and\nHigh-Performance Computing.” Journal of Open Source\nSoftware 6 (57): 2959. https://doi.org/10.21105/joss.02959.\n\n\nLima, Bruno. 2022. “Efat: Funções Para Análise de Dados Do\ne-Fatura.” R package. https://git.ine.pt/nda/e-fatura/efat.\n\n\nLima, Bruno, and Alexandre Cunha. 2024. “Fera: FERramentas de\nApoio à Análise de Dados Administrativos.” R package. https://git.ine.pt/nda/packages-r-nda/fera.\n\n\nMoritz, Steffen, and Thomas Bartz-Beielstein. 2017. “imputeTS: Time Series Missing Value Imputation in\nR.” The R Journal 9 (1): 207–18. https://doi.org/10.32614/RJ-2017-009.\n\n\nO’Hara-Wild, Mitchell, Rob Hyndman, and Earo Wang. 2022. Fable:\nForecasting Models for Tidy Time Series. https://CRAN.R-project.org/package=fable.\n\n\nWang, Earo, Dianne Cook, and Rob J Hyndman. 2020. “A New Tidy Data\nStructure to Support Exploration and Modeling of Temporal Data.”\nJournal of Computational and Graphical Statistics 29 (3):\n466–78. https://doi.org/10.1080/10618600.2019.1695624.\n\n\nWickham, Hadley, Mara Averick, Jennifer Bryan, Winston Chang, Lucy\nD’Agostino McGowan, Romain François, Garrett Grolemund, et al. 2019.\n“Welcome to the tidyverse.”\nJournal of Open Source Software 4 (43): 1686.",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>References</span>"
+    ]
+  }
+]

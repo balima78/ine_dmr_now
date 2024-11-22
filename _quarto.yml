@@ -1,0 +1,62 @@
+project:
+  type: book
+  output-dir: docs
+  
+
+book:
+  title: "Report de nowcasting DMR-SS"
+  favicon: "images/nda.png"
+  author: "DRGD / SDAE / NDA"
+  date: "2024-09-12"
+  search: true
+  repo-url: "https://git.ine.pt/nda/dmr-ss/report_dmr_ss_forecasting.qmd"
+  repo-actions: [edit]
+  downloads: [pdf, epub]
+  body-footer: |
+    ![](images/ine_logo_secundario_cores_491x57.png){width=50%}
+  chapters:
+    - index.qmd
+    - 100-intro.qmd
+    - 200-metodos.qmd
+    - 300-resultados.qmd
+    - 400-conclusao.qmd
+    - references.qmd
+  page-navigation: true
+
+bibliography: references.bib
+
+format:
+  epub:
+    toc:
+      true
+    lang:
+      pt
+    date:
+      "2023-10-13"
+    css:
+      epub.css
+  html:
+    theme:
+      light: flatly
+      dark: solar
+    css:
+      epub.css
+  pdf:
+    keep-tex: true
+    documentclass: scrbook
+    classoption: [paper=6in:9in,pagesize=pdftex,headinclude=on,footinclude=on,12pt]
+    include-in-header:
+      text: |
+        \usepackage{fvextra}
+        \DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,commandchars=\\\{\}}
+        \areaset[0.50in]{4.5in}{8in}
+    include-before-body:
+      text: |
+        \RecustomVerbatimEnvironment{verbatim}{Verbatim}{
+           showspaces = false,
+           showtabs = false,
+           breaksymbolleft={},
+           breaklines
+           % Note: setting commandchars=\\\{\} here will cause an error 
+        }  
+    fig-pos: 'H'

@@ -1,0 +1,96 @@
+# Resultados
+
+```{r}
+#| label: setup_res
+#| include: false
+
+knitr::opts_chunk$set(echo = F, warning = F, message = F)
+
+library(targets)
+library(tidyverse)
+library(tsibble)
+library(kableExtra)
+library(lubridate)
+
+
+```
+
+Aqui são apresentados os resultados da implementação do procedimento de *nowcast* dos valores de **REM** e **NPS** para o mês de tratamento:  **`r tar_read(mes_ref)`**
+
+## Mês de tratamento
+
+A partir de **`r tar_read(caes_tsib_nest) %>% nrow()`** CAEs diferentes (CAEs a 5 dígitos utilizadas no âmbito do IVNE), foram construídas as respetivas series temporais, desde a data de primeiro registo até ao mês `r tar_read(mes_ref)`.
+
+Foram excluídas da análise as CAEs sem resultados no mês anterior ao mês de tratamento e as que tivessem mais de 4 meses (consecutivos ou não) em falta nas respetivas series temporais.
+
+```{r}
+#| eval: true 
+#| label: cae_excluidas
+#| tbl-cap: CAEs sem nowcast
+
+tar_read(caes_tsib_nest_descr) %>%
+  # seleciona CAEs excluidas
+  filter(!(max_data == as.Date(paste0(tar_read(mes_ref), '-01')) %m-% months(1) %>% as.character() & 
+         n_na < 5)) %>% 
+  mutate(Ultimo.Mes = substr(max_data, 1, 7),
+         Primeiro.Mes = substr(min_data, 1, 7)) %>% 
+  select(CAE=id, Nr.linhas = n_row, Nr.missings= n_na, Primeiro.Mes, Ultimo.Mes) %>% 
+  kbl() %>%
+  kable_styling(bootstrap_options = c("striped", "hover"))
+
+```
+
+Resultados de *nowcast*:
+
+```{r}
+#| eval: true 
+#| label: now_rem
+#| fig-cap: Nowcast para os valores de REM total
+
+tar_load(plot_res_cv_nowcast)
+
+plot_res_cv_nowcast %>%
+  select(-starts_with('data'),-starts_with('max'), -starts_with('cv_'), -starts_with('mes_'), -starts_with('df_'), -gg_cv_now_nps) %>% 
+  trelliscopejs::trelliscope(
+    name = 'gg_cv_now_rem',
+    desc = 'Nowcast para os valores de REM total',
+    panel_col = "gg_cv_now_rem",
+    path = "trellis/trellis_plot_now_rem",
+    nrow = 2,
+    ncol = 2,
+    self_contained = TRUE,
+    #thumb = TRUE,
+    auto_cog = FALSE)
+```
+
+| variável | descrição |
+| ----- | ----- |
+| id | CAE |
+| n_row | Nr total de meses em análise (do primeiro registo ao mês atual) |
+| n_na | Nr de meses em falta |
+| max_data | último mês com valores |
+| best_model_rem | Modelo selecionado para o nowcast de REM |
+| best_model_nps | Modelo selecionado para o nowcast de NPS |
+: Legenda das variáveis auxiliares {.striped .hover}
+
+```{r}
+#| eval: true 
+#| label: now_nps
+#| fig-cap: Nowcast para os valores de NPS
+
+plot_res_cv_nowcast %>%
+  select(-starts_with('data'),-starts_with('max'), -starts_with('cv_'), -starts_with('mes_'), -starts_with('df_'), -gg_cv_now_rem) %>% 
+  trelliscopejs::trelliscope(
+    name = 'gg_cv_now_nps',
+    desc = 'Nowcast para os valores de NPS',
+    panel_col = "gg_cv_now_nps",
+    path = "trellis/trellis_plot_now_nps",
+    nrow = 2,
+    ncol = 2,
+    self_contained = TRUE,
+    #thumb = TRUE,
+    auto_cog = FALSE)
+```
+
+Os resultados de *nowcast* para o mês de tratamento, foram adicionados à tabela `T_DMRSS_FORECASTING` em `FNTLAB`.
+

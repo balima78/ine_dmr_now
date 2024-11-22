@@ -1,0 +1,64 @@
+# Métodos
+
+<!-- Com recurso à view: -->
+
+<!-- ``` -->
+<!-- create or replace view v_dmrss_forecasting as -->
+<!-- select /*+parallel(5)*/ t.ano,t.mes,t.cae3, -->
+<!-- sum(nvl(t.dmrss_rem_total,0))dmrss_rem_total, -->
+<!-- sum(nvl(t.dmrss_rem_base,0))dmrss_rem_base, -->
+<!-- sum(nvl(t.dmrss_rem_reg_mensal,0))dmrss_rem_reg_mensal, -->
+<!-- sum(nvl(t.dmrss_nps,0))dmrss_nps  -->
+<!-- from FNTDMR.TF_DMR_BASE_COMUM t -->
+<!-- where t.ano||t.mes <>'201401' and t.cae3 is not null -->
+<!-- group by t.ano,t.mes,t.cae3 -->
+<!-- order by t.ano,t.mes,t.cae3 -->
+<!-- ``` -->
+
+
+Inicialmente, pretendemos identificar anomalias (*missings* e *outliers*) a nível CAE para as remunerações totais mensais (`REM`) e para o número de pessoas ao serviço (`NPS`).
+
+<!-- ::: callout-important -->
+<!-- São analisados dados desde 2014-02 até `r tar_read(mes_ref)`. -->
+<!-- ::: -->
+
+A identificação de *outliers* foi feita com recurso ao algoritmo de *isolation forest* [@isotree]. A decisão pela correção ou não dos *outliers* deverá ser feita com base no conhecimento do negócio.
+
+## Nowcast
+
+Para cada uma das series pretende-se fazer o nowcast para o mês de tratamento. Para tal, foram treinados os modelos ARIMA, ETS, SNAIVE, TSLM e mixed com recurso ao package {fable} [@fable]:
+
++ ARIMA: devolve o melhor modelo ARIMA para uma serie temporal univariada;
++ ETS: Exponential smoothing state space models sem especificação dos parametros error, trend e season;
++ SNAIVE: método naive sazonal com um lag anual;
++ TSLM: modelo de regressão linear com tendência e sazonalidade;
++ mixed: média dos resultados dos modelos ARIMA, ETS, SNAIVE e TSLM;
++ varHom: é aplicada a variação homóloga ao mês anterior.
+
+A selecção do melhor modelo para cada uma das séries temporais foi feita com o cross-validation de 12 meses com a previsão sequencial de cada um dos meses. A métrica Mean Absolute Scaled Error (MASE) [@metrics] foi usada para comparar as previsões dos modelos com os valores reais sendo escolhido para nowcast o modelo com um menor valor de MASE.
+
+No caso de alguma das séries de cada CAE ter até 4 meses em falta é feita a imputação desses missings com recurso ao Kalman-Smoothing em modelos estruturais de series temporais [@imputets].
+
+## R
+
+Toda a análise, visualização e tratamento dos dados são feitos em *R*:
+
+| *package*       | descrição
+| ----- | -----
+| `tidyverse`     | para a manipulação de dados [@wickham2019b]
+| `lubridate`     | para trabalhar com datas [@lubridate]
+| `tsibble`       | para manipulação de dados de serie temporais [@tsibble]
+| `targets`       | para a construção de uma *pipeline* com as operações feitas aos dados [@targets]
+| `tarchetypes`   | uma colecção de funcionalidades a usar na *pipeline* [@tarchetypes]
+| `fable`   | coleção de modelos comuns para forecasting de series univariadas [@fable] -->
+| `imputeTS`     | para a imputação de valores no caso de *missings* [@imputets]
+| `isotree`       | para a identificação de anomalias [@isotree] 
+| `trelliscopejs` | para a visualização de múltiplos gráficos [@trellis]
+| `efat`          | auxiliar para tratamento de dados do e-fatura [@efat]
+| `fera`          | ferramentas de apoio à análise de dados administrativos [@fera]  
+<!-- | `igraph`    | para análise de redes [@igraph] -->
+
+
+
+<br>
+

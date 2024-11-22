@@ -1,0 +1,12 @@
+# Introdução
+
+A base de dados “DMR-SS”, consiste numa Declaração Mensal de Remunerações entregue pela entidade empregadora ou seu representante legal à Segurança Social, onde constam todas as quantias pagas ao trabalhador, que são objeto de descontos e respetivas taxas contributivas aplicadas.
+
+Atualmente a DMR-SS é enviada mensalmente, em quatro versões revistas para o INE. O DMSI faz um tratamento de dados, através de um processo de imputação parcial em R. Posteriormente, os diversos departamentos de matéria do INE, usam estes dados para produzir informação estatística.
+
+Contudo, os dados das DMR-SS podem conter muita informação em falta no período de Verão (férias fiscais). Neste contexto o NDA desenvolveu um modelo alternativo, que faz uma previsão mensal (*nowcast*) do que seriam os dados a receber, agregados ao nível CAE (5 dígitos).
+
+Estes valores estimados excluem as CAEs cujos dados são recolhidos via inquérito às UAE, pelo que estes, posteriormente, podem ser integrados numa tabela final a ser utilizada na produção estatística (via “Control-M”).
+
+
+

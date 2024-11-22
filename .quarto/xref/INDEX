@@ -1,0 +1,20 @@
+{
+  "index.qmd": {
+    "index.html": "5c06992c"
+  },
+  "100-intro.qmd": {
+    "100-intro.html": "8852921d"
+  },
+  "200-metodos.qmd": {
+    "200-metodos.html": "2fb03d9e"
+  },
+  "300-resultados.qmd": {
+    "300-resultados.html": "dd1180bc"
+  },
+  "400-conclusao.qmd": {
+    "400-conclusao.html": "709bf329"
+  },
+  "references.qmd": {
+    "references.html": "f6a78849"
+  }
+}
